@@ -62,7 +62,7 @@ SVF (_ZGVsMxvl8_modf_int, sv_modf_int, modfl_int, modf_mpfr_int, 1, 0, d1, 0)
 # endif
 #endif
 
-#if WANT_TRIGPI_TESTS
+#if WANT_C23_TESTS
  F (arm_math_cospif, arm_math_cospif, arm_math_cospi, mpfr_cospi, 1, 1, f1, 0)
  F (arm_math_cospi,  arm_math_cospi,  arm_math_cospil, mpfr_cospi, 1, 0, d1, 0)
  F (arm_math_sinpif, arm_math_sinpif, arm_math_sinpi, mpfr_sinpi, 1, 1, f1, 0)
@@ -92,6 +92,7 @@ SVF (_ZGVsMxvl8_modf_int, sv_modf_int, modfl_int, modf_mpfr_int, 1, 0, d1, 0)
  F (_ZGVnN4v_sincospif_cos, v_sincospif_cos, arm_math_cospi, mpfr_cospi, 1, 1, f1, 0)
  F (_ZGVnN2v_sincospi_sin, v_sincospi_sin, arm_math_sinpil, mpfr_sinpi, 1, 0, d1, 0)
  F (_ZGVnN2v_sincospi_cos, v_sincospi_cos, arm_math_cospil, mpfr_cospi, 1, 0, d1, 0)
+ F (_ZGVnN4v_exp2m1f, Z_exp2m1f, arm_math_exp2m1,  mpfr_exp2m1, 1, 1, f1, 0)
 # endif
 # if WANT_SVE_TESTS
  SVF (_ZGVsMxv_acospif, Z_sv_acospif, arm_math_acospi,  mpfr_acospi, 1, 1, f1, 0)
