@@ -24,6 +24,7 @@ cc_defaults {
         "-O2",
         "-ffp-contract=fast",
         "-fno-math-errno",
+        "-O3",
 
         // bionic configuration.
 
