@@ -24,65 +24,113 @@ static int sincos_mpfr_cos(mpfr_t y, const mpfr_t x, mpfr_rnd_t r) { mpfr_sin(y,
 static int modf_mpfr_frac(mpfr_t f, const mpfr_t x, mpfr_rnd_t r) { MPFR_DECL_INIT(i, 80); return mpfr_modf(i,f,x,r); }
 static int modf_mpfr_int(mpfr_t i, const mpfr_t x, mpfr_rnd_t r) { MPFR_DECL_INIT(f, 80); return mpfr_modf(i,f,x,r); }
 # if MPFR_VERSION < MPFR_VERSION_NUM(4, 2, 0)
-static int mpfr_exp2m1 (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
-  MPFR_DECL_INIT (frd, 1080);
-  MPFR_DECL_INIT (one, 1080);
-  mpfr_set_d(one, 1.0, GMP_RNDN);
-  mpfr_exp2 (frd, arg, GMP_RNDN);
-  return mpfr_sub (ret, frd, one, GMP_RNDN);
-}
-
 static int mpfr_acospi (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
   MPFR_DECL_INIT (frd, 1080);
   MPFR_DECL_INIT (pi, 1080);
-  mpfr_const_pi (pi, GMP_RNDN);
-  mpfr_acos (frd, arg, GMP_RNDN);
-  return mpfr_div (ret, frd, pi, GMP_RNDN);
+  mpfr_const_pi (pi, rnd);
+  mpfr_acos (frd, arg, rnd);
+  return mpfr_div (ret, frd, pi, rnd);
 }
 
 static int mpfr_asinpi (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
   MPFR_DECL_INIT (frd, 1080);
   MPFR_DECL_INIT (pi, 1080);
-  mpfr_const_pi (pi, GMP_RNDN);
-  mpfr_asin (frd, arg, GMP_RNDN);
-  return mpfr_div (ret, frd, pi, GMP_RNDN);
+  mpfr_const_pi (pi, rnd);
+  mpfr_asin (frd, arg, rnd);
+  return mpfr_div (ret, frd, pi, rnd);
 }
 
 static int mpfr_atanpi (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
   MPFR_DECL_INIT (frd, 1080);
   MPFR_DECL_INIT (pi, 1080);
-  mpfr_const_pi (pi, GMP_RNDN);
-  mpfr_atan (frd, arg, GMP_RNDN);
-  return mpfr_div (ret, frd, pi, GMP_RNDN);
+  mpfr_const_pi (pi, rnd);
+  mpfr_atan (frd, arg, rnd);
+  return mpfr_div (ret, frd, pi, rnd);
 }
 
 static int mpfr_atan2pi (mpfr_t ret, const mpfr_t argx, const mpfr_t argy, mpfr_rnd_t rnd) {
   MPFR_DECL_INIT (frd, 1080);
   MPFR_DECL_INIT (pi, 1080);
-  mpfr_const_pi (pi, GMP_RNDN);
-  mpfr_atan2 (frd, argx, argy, GMP_RNDN);
-  return mpfr_div (ret, frd, pi, GMP_RNDN);
+  mpfr_const_pi (pi, rnd);
+  mpfr_atan2 (frd, argx, argy, rnd);
+  return mpfr_div (ret, frd, pi, rnd);
+}
+
+static inline int mpfr_is_even (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
+  mpfr_set_d (ret, 2.0, rnd);
+  mpfr_fmod (ret, arg, ret, rnd);
+  return mpfr_cmp_ui (ret, 1);
 }
 
 static int mpfr_cospi (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
+  MPFR_DECL_INIT (abs, 1080);
+  /* Computing cospi(|x|) is more convenient.  */
+  mpfr_abs (abs, arg, rnd);
+  /* Integer input cases.  */
+  if (mpfr_integer_p (abs)) {
+    if (mpfr_is_even (ret, abs, rnd))
+      return mpfr_set_d (ret, 1.0, rnd);
+    return mpfr_set_d (ret, -1.0, rnd);
+  }
+  /* Integer + 0.5 input should always return 0.  */
+  MPFR_DECL_INIT (cst, 1080);
+  mpfr_set_d (cst, 0.5, rnd);
+  mpfr_add (cst, abs, cst, rnd);
+  if (mpfr_integer_p (cst)) {
+    mpfr_set_zero (ret, 1);
+    return 0;
+  }
+  mpfr_const_pi (cst, rnd);
+  mpfr_mul (abs, abs, cst, rnd);
+  return mpfr_cos (ret, abs, rnd);
+}
+
+static int mpfr_exp10m1 (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
   MPFR_DECL_INIT (frd, 1080);
-  mpfr_const_pi (frd, GMP_RNDN);
-  mpfr_mul (frd, frd, arg, GMP_RNDN);
-  return mpfr_cos (ret, frd, GMP_RNDN);
+  MPFR_DECL_INIT (one, 1080);
+  mpfr_set_d(one, 1.0, rnd);
+  mpfr_exp10 (frd, arg, rnd);
+  return mpfr_sub (ret, frd, one, rnd);
+}
+
+static int mpfr_exp2m1 (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
+  MPFR_DECL_INIT (frd, 1080);
+  MPFR_DECL_INIT (one, 1080);
+  mpfr_set_d(one, 1.0, rnd);
+  mpfr_exp2 (frd, arg, rnd);
+  return mpfr_sub (ret, frd, one, rnd);
+}
+
+static int mpfr_log2p1 (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
+  MPFR_DECL_INIT (m, 1080);
+  MPFR_DECL_INIT (one, 1080);
+  mpfr_set_d(one, 1.0, rnd);
+  mpfr_add(m, arg, one, rnd);
+  return mpfr_log2 (ret, m, rnd);
 }
 
 static int mpfr_sinpi (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
+  if (mpfr_integer_p (arg)) {
+    /* Integer inputs return signed 0 depending on sign of input.  */
+    mpfr_set_zero (ret, 1);
+    mpfr_set_zero (ret, mpfr_greater_p (arg, ret));
+    return 0;
+  }
   MPFR_DECL_INIT (frd, 1080);
-  mpfr_const_pi (frd, GMP_RNDN);
-  mpfr_mul (frd, frd, arg, GMP_RNDN);
-  return mpfr_sin (ret, frd, GMP_RNDN);
+  mpfr_const_pi (frd, rnd);
+  mpfr_mul (frd, frd, arg, rnd);
+  return mpfr_sin (ret, frd, rnd);
 }
 
 static int mpfr_tanpi (mpfr_t ret, const mpfr_t arg, mpfr_rnd_t rnd) {
-  MPFR_DECL_INIT (frd, 1080);
-  mpfr_const_pi (frd, GMP_RNDN);
-  mpfr_mul (frd, frd, arg, GMP_RNDN);
-  return mpfr_tan (ret, frd, GMP_RNDN);
+  MPFR_DECL_INIT (cos, 1080);
+  MPFR_DECL_INIT (sin, 1080);
+  mpfr_sinpi (sin, arg, rnd);
+  mpfr_cospi (cos, arg, rnd);
+  /* All special cases are dealt with in sinpi and cospi, therefore it is more
+     convenient (not most efficient) to rely on mpfr_div than calling mpfr_tan.
+  */
+  return mpfr_div (ret, sin, cos, rnd);
 }
 # endif
 # if WANT_EXPERIMENTAL_MATH
@@ -184,11 +232,15 @@ ZVNF2_WRAP (atan2pi)
 ZVND2_WRAP (atan2pi)
 ZVNF1_WRAP (cospi)
 ZVND1_WRAP (cospi)
+ZVNF1_WRAP (exp10m1)
+ZVND1_WRAP (exp10m1)
+ZVNF1_WRAP (exp2m1)
+ZVND1_WRAP (exp2m1)
+ZVNF1_WRAP (log2p1)
 ZVNF1_WRAP (sinpi)
 ZVND1_WRAP (sinpi)
 ZVNF1_WRAP (tanpi)
 ZVND1_WRAP (tanpi)
-ZVNF1_WRAP (exp2m1)
 
 double
 v_sincospi_sin (double x)
@@ -329,11 +381,16 @@ ZSVNF2_WRAP (atan2pi)
 ZSVND2_WRAP (atan2pi)
 ZSVNF1_WRAP (cospi)
 ZSVND1_WRAP (cospi)
+ZSVNF1_WRAP (exp10m1)
+ZSVND1_WRAP (exp10m1)
 ZSVNF1_WRAP (exp2m1)
+ZSVND1_WRAP (exp2m1)
+ZSVNF1_WRAP (log2p1)
 ZSVNF1_WRAP (sinpi)
 ZSVND1_WRAP (sinpi)
 ZSVNF1_WRAP (tanpi)
 ZSVND1_WRAP (tanpi)
+
 double
 sv_sincospi_sin (svbool_t pg, double x)
 {
