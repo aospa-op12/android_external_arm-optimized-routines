@@ -1,7 +1,7 @@
 /*
  * Public API.
  *
- * Copyright (c) 2015-2025, Arm Limited.
+ * Copyright (c) 2015-2026, Arm Limited.
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
  */
 
@@ -16,7 +16,6 @@ float arm_math_sinpif (float);
 double arm_math_sinpi (double);
 float arm_math_tanpif (float);
 double arm_math_tanpi (double);
-double arm_math_atan2pi (double, double);
 void arm_math_sincospif (float, float *, float *);
 void arm_math_sincospi (double, double *, double *);
 #endif
@@ -125,6 +124,7 @@ __vpcs float32x4_t _ZGVnN4v_cbrtf (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_cosf (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_coshf (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_cospif (float32x4_t);
+__vpcs float32x4_t _ZGVnN4v_cr_expf (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_erfcf (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_erff (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_exp10f (float32x4_t);
@@ -135,6 +135,7 @@ __vpcs float32x4_t _ZGVnN4v_exp10m1f (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_expf (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_expf_1u (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_expm1f (float32x4_t);
+__vpcs float32x4_t _ZGVnN4v_lgammaf (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_log10f (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_log10p1f (float32x4_t);
 __vpcs float32x4_t _ZGVnN4v_log1pf (float32x4_t);
@@ -152,6 +153,7 @@ __vpcs float32x4_t _ZGVnN4vl4_modff (float32x4_t, float *);
 __vpcs float32x4_t _ZGVnN4vv_atan2f (float32x4_t, float32x4_t);
 __vpcs float32x4_t _ZGVnN4vv_atan2pif (float32x4_t, float32x4_t);
 __vpcs float32x4_t _ZGVnN4vv_hypotf (float32x4_t, float32x4_t);
+__vpcs float32x4_t _ZGVnN4vv_powrf (float32x4_t, float32x4_t);
 __vpcs float32x4_t _ZGVnN4vv_powf (float32x4_t, float32x4_t);
 __vpcs float32x4x2_t _ZGVnN4v_cexpif (float32x4_t);
 __vpcs float32x4x2_t _ZGVnN4v_cexpipif (float32x4_t);
@@ -180,6 +182,7 @@ __vpcs float64x2_t _ZGVnN2v_exp10m1 (float64x2_t);
 __vpcs float64x2_t _ZGVnN2v_exp2 (float64x2_t);
 __vpcs float64x2_t _ZGVnN2v_exp2m1 (float64x2_t);
 __vpcs float64x2_t _ZGVnN2v_expm1 (float64x2_t);
+__vpcs float64x2_t _ZGVnN2v_lgamma (float64x2_t);
 __vpcs float64x2_t _ZGVnN2v_log (float64x2_t);
 __vpcs float64x2_t _ZGVnN2v_log10 (float64x2_t);
 __vpcs float64x2_t _ZGVnN2v_log10p1 (float64x2_t);
@@ -198,6 +201,7 @@ __vpcs float64x2_t _ZGVnN2vv_atan2 (float64x2_t, float64x2_t);
 __vpcs float64x2_t _ZGVnN2vv_atan2pi (float64x2_t, float64x2_t);
 __vpcs float64x2_t _ZGVnN2vv_hypot (float64x2_t, float64x2_t);
 __vpcs float64x2_t _ZGVnN2vv_pow (float64x2_t, float64x2_t);
+__vpcs float64x2_t _ZGVnN2vv_powr (float64x2_t, float64x2_t);
 __vpcs float64x2x2_t _ZGVnN2v_cexpi (float64x2_t);
 __vpcs float64x2x2_t _ZGVnN2v_cexpipi (float64x2_t x);
 __vpcs float64x2x2_t _ZGVnN2v_modf_stret (float64x2_t x);
@@ -252,6 +256,7 @@ svfloat32_t _ZGVsMxvl4_modff (svfloat32_t, float *, svbool_t);
 svfloat32_t _ZGVsMxvv_atan2f (svfloat32_t, svfloat32_t, svbool_t);
 svfloat32_t _ZGVsMxvv_atan2pif (svfloat32_t, svfloat32_t, svbool_t);
 svfloat32_t _ZGVsMxvv_hypotf (svfloat32_t, svfloat32_t, svbool_t);
+svfloat32_t _ZGVsMxvv_powrf (svfloat32_t, svfloat32_t, svbool_t);
 svfloat32_t _ZGVsMxvv_powf (svfloat32_t, svfloat32_t, svbool_t);
 svfloat32x2_t _ZGVsMxv_cexpif (svfloat32_t, svbool_t);
 svfloat32x2_t _ZGVsMxv_cexpipif (svfloat32_t, svbool_t);
@@ -298,6 +303,7 @@ svfloat64_t _ZGVsMxvv_atan2 (svfloat64_t, svfloat64_t, svbool_t);
 svfloat64_t _ZGVsMxvv_atan2pi (svfloat64_t, svfloat64_t, svbool_t);
 svfloat64_t _ZGVsMxvv_hypot (svfloat64_t, svfloat64_t, svbool_t);
 svfloat64_t _ZGVsMxvv_pow (svfloat64_t, svfloat64_t, svbool_t);
+svfloat64_t _ZGVsMxvv_powr (svfloat64_t, svfloat64_t, svbool_t);
 svfloat64x2_t _ZGVsMxv_cexpi (svfloat64_t, svbool_t);
 svfloat64x2_t _ZGVsMxv_cexpipi (svfloat64_t, svbool_t);
 svfloat64x2_t _ZGVsMxv_modf_stret (svfloat64_t, svbool_t);

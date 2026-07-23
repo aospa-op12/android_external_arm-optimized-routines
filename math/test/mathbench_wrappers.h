@@ -1,7 +1,7 @@
 /*
  * Function wrappers for mathbench.
  *
- * Copyright (c) 2022-2025, Arm Limited.
+ * Copyright (c) 2022-2026, Arm Limited.
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
  */
 
@@ -40,6 +40,28 @@ powi_wrap (double x)
   return __builtin_powi (x, (int) round (x));
 }
 #endif /* WANT_EXPERIMENTAL_MATH.  */
+
+static double
+lgamma_r_wrap (double x)
+{
+#if defined(__APPLE__) || defined(_WIN32)
+  return lgamma (x);
+#else
+  int sign;
+  return lgamma_r (x, &sign);
+#endif
+}
+
+static float
+lgammaf_r_wrap (float x)
+{
+#if defined (__APPLE__) || defined (_WIN32)
+  return lgammaf (x);
+#else
+  int sign;
+  return lgammaf_r (x, &sign);
+#endif
+}
 
 #if __aarch64__ && __linux__
 
@@ -145,6 +167,42 @@ __vpcs static float64x2_t
 y_Z_pow (float64x2_t x)
 {
   return _ZGVnN2vv_pow (vdupq_n_f64 (2.34), x);
+}
+
+__vpcs static float64x2_t
+xy_Z_powr (float64x2_t x)
+{
+  return _ZGVnN2vv_powr (x, x);
+}
+
+__vpcs static float64x2_t
+x_Z_powr (float64x2_t x)
+{
+  return _ZGVnN2vv_powr (x, vdupq_n_f64 (23.4));
+}
+
+__vpcs static float64x2_t
+y_Z_powr (float64x2_t x)
+{
+  return _ZGVnN2vv_powr (vdupq_n_f64 (2.34), x);
+}
+
+__vpcs static float32x4_t
+xy_Z_powrf (float32x4_t x)
+{
+  return _ZGVnN4vv_powrf (x, x);
+}
+
+__vpcs static float32x4_t
+x_Z_powrf (float32x4_t x)
+{
+  return _ZGVnN4vv_powrf (x, vdupq_n_f32 (23.4));
+}
+
+__vpcs static float32x4_t
+y_Z_powrf (float32x4_t x)
+{
+  return _ZGVnN4vv_powrf (vdupq_n_f32 (2.34), x);
 }
 
 __vpcs static float32x4_t
@@ -270,6 +328,24 @@ _Z_sv_hypot_wrap (svfloat64_t x, svbool_t pg)
 }
 
 static svfloat32_t
+xy_Z_sv_powrf (svfloat32_t x, svbool_t pg)
+{
+  return _ZGVsMxvv_powrf (x, x, pg);
+}
+
+static svfloat32_t
+x_Z_sv_powrf (svfloat32_t x, svbool_t pg)
+{
+  return _ZGVsMxvv_powrf (x, svdup_f32 (23.4f), pg);
+}
+
+static svfloat32_t
+y_Z_sv_powrf (svfloat32_t x, svbool_t pg)
+{
+  return _ZGVsMxvv_powrf (svdup_f32 (2.34f), x, pg);
+}
+
+static svfloat32_t
 xy_Z_sv_powf (svfloat32_t x, svbool_t pg)
 {
   return _ZGVsMxvv_powf (x, x, pg);
@@ -303,6 +379,24 @@ static svfloat64_t
 y_Z_sv_pow (svfloat64_t x, svbool_t pg)
 {
   return _ZGVsMxvv_pow (svdup_f64 (2.34), x, pg);
+}
+
+static svfloat64_t
+xy_Z_sv_powr (svfloat64_t x, svbool_t pg)
+{
+  return _ZGVsMxvv_powr (x, x, pg);
+}
+
+static svfloat64_t
+x_Z_sv_powr (svfloat64_t x, svbool_t pg)
+{
+  return _ZGVsMxvv_powr (x, svdup_f64 (23.4), pg);
+}
+
+static svfloat64_t
+y_Z_sv_powr (svfloat64_t x, svbool_t pg)
+{
+  return _ZGVsMxvv_powr (svdup_f64 (2.34), x, pg);
 }
 
 #if WANT_C23_TESTS

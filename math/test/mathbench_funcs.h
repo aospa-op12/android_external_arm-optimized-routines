@@ -1,16 +1,26 @@
 /*
  * Function entries for mathbench.
  *
- * Copyright (c) 2022-2025, Arm Limited.
+ * Copyright (c) 2022-2026, Arm Limited.
  * SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
  */
 /* clang-format off */
 {"pow", 'd', 0, 0.01, 11.1, {.d = xypow}},
 D (xpow, 0.01, 11.1)
 D (ypow, -9.9, 9.9)
+#if defined (__APPLE__) || defined (_WIN32)
+{"lgamma", 'd', 0, -10.0, 10.0, {.d = lgamma_r_wrap}},
+#else
+{"lgamma_r", 'd', 0, -10.0, 10.0, {.d = lgamma_r_wrap}},
+#endif
 {"powf", 'f', 0, 0.01, 11.1, {.f = xypowf}},
 F (xpowf, 0.01, 11.1)
 F (ypowf, -9.9, 9.9)
+#if defined (__APPLE__) || defined (_WIN32)
+{"lgammaf", 'f', 0, -10.0, 10.0, {.f = lgammaf_r_wrap}},
+#else
+{"lgammaf_r", 'f', 0, -10.0, 10.0, {.f = lgammaf_r_wrap}},
+#endif
 {"sincosf", 'f', 0, 0.1, 0.7, {.f = sincosf_wrap}},
 {"sincosf", 'f', 0, 0.8, 3.1, {.f = sincosf_wrap}},
 {"sincosf", 'f', 0, -3.1, 3.1, {.f = sincosf_wrap}},
@@ -46,9 +56,15 @@ F (arm_math_erff, -4.0, 4.0)
 {"_ZGVnN2vv_pow",    'd', 'n', -10.0, 10.0, {.vnd = xy_Z_pow}},
 {"x_ZGVnN2vv_pow",   'd', 'n', -10.0, 10.0, {.vnd = x_Z_pow}},
 {"y_ZGVnN2vv_pow",   'd', 'n', -10.0, 10.0, {.vnd = y_Z_pow}},
+{"_ZGVnN2vv_powr",   'd', 'n',   0.01, 11.1, {.vnd = xy_Z_powr}},
+{"x_ZGVnN2vv_powr",  'd', 'n',   0.01, 11.1, {.vnd = x_Z_powr}},
+{"y_ZGVnN2vv_powr",  'd', 'n',  -10.0, 10.0, {.vnd = y_Z_powr}},
 {"_ZGVnN4vv_powf",  'f', 'n',   0.01, 11.1, {.vnf = xy_Z_powf}},
 {"x_ZGVnN4vv_powf", 'f', 'n',   0.01, 11.1, {.vnf = x_Z_powf}},
 {"y_ZGVnN4vv_powf", 'f', 'n',  -10.0, 10.0, {.vnf = y_Z_powf}},
+{"_ZGVnN4vv_powrf", 'f', 'n',   0.01, 11.1, {.vnf = xy_Z_powrf}},
+{"x_ZGVnN4vv_powrf", 'f', 'n',  0.01, 11.1, {.vnf = x_Z_powrf}},
+{"y_ZGVnN4vv_powrf", 'f', 'n', -10.0, 10.0, {.vnf = y_Z_powrf}},
 {"_ZGVnN4vl4_modff", 'f', 'n', -10.0, 10.0, {.vnf = _Z_modff_wrap}},
 {"_ZGVnN2vl8_modf",  'd', 'n', -10.0, 10.0, {.vnd = _Z_modf_wrap}},
 {"_ZGVnN4v_modff_stret", 'f', 'n', -10.0, 10.0, {.vnf = _Z_modff_stret_wrap}},
@@ -57,6 +73,8 @@ F (arm_math_erff, -4.0, 4.0)
 {"_ZGVnN2vl8l8_sincos", 'd', 'n', -3.1, 3.1, {.vnd = _Z_sincos_wrap}},
 {"_ZGVnN4v_cexpif", 'f', 'n', -3.1, 3.1, {.vnf = _Z_cexpif_wrap}},
 {"_ZGVnN2v_cexpi", 'd', 'n', -3.1, 3.1, {.vnd = _Z_cexpi_wrap}},
+VNF (_ZGVnN4v_lgammaf, -10.0, 10.0)
+VND (_ZGVnN2v_lgamma, -10.0, 10.0)
 VNF (_ZGVnN4v_expf_1u, -9.9, 9.9)
 VNF (_ZGVnN4v_exp2f_1u, -9.9, 9.9)
 # if WANT_EXPERIMENTAL_MATH
@@ -141,6 +159,12 @@ SVF (_ZGVsMxv_sinpif, -0.9, 0.9)
 SVD (_ZGVsMxv_sinpi, -0.9, 0.9)
 SVF (_ZGVsMxv_tanpif, -0.9, 0.9)
 SVD (_ZGVsMxv_tanpi, -0.9, 0.9)
+{"x_ZGVsMxvv_powrf",    'f', 's', -10.0, 10.0, {.svf = x_Z_sv_powrf}},
+{"y_ZGVsMxvv_powrf",    'f', 's', -10.0, 10.0, {.svf = y_Z_sv_powrf}},
+{"_ZGVsMxvv_powrf",    'f', 's', -10.0, 10.0, {.svf = xy_Z_sv_powrf}},
+{"x_ZGVsMxvv_powr",     'd', 's', -10.0, 10.0, {.svd = x_Z_sv_powr}},
+{"y_ZGVsMxvv_powr",     'd', 's', -10.0, 10.0, {.svd = y_Z_sv_powr}},
+{"_ZGVsMxvv_powr",     'd', 's', -10.0, 10.0, {.svd = xy_Z_sv_powr}},
 {"_ZGVsMxvl4l4_sincospif", 'f', 's', -0.9, 0.9, {.svf = _Z_sv_sincospif_wrap}},
 {"_ZGVsMxvl8l8_sincospi", 'd', 's', -0.9, 0.9, {.svd = _Z_sv_sincospi_wrap}},
 {"_ZGVsMxv_cexpipif", 'f', 's', -0.9, 0.9, {.svf = _Z_sv_cexpipif_wrap}},
